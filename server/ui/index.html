@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" ng-app="PingMatrixApp" ng-controller="PingMatrixCtrl">
+
+<head>
+  <meta charset="utf-8">
+  <title>ping matrix</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+  <script>
+
+    var pingMatrixApp = angular.module('PingMatrixApp', []);
+    pingMatrixApp.controller('PingMatrixCtrl', function ($scope, $http, $timeout) {
+      $scope.getData = function () {
+        $http.get('pings').success(function (data) {
+          rows = {};
+          cols = {};
+          console.log(data);
+          angular.forEach(data, function (i) {
+            console.log(i);
+            rows[i.src] = i
+            cols[i.dst] = i
+          });
+          $scope.rows = rows;
+          $scope.cols = cols;
+          $scope.pings = data;
+        });
+      };
+
+      $scope.intervalFunction = function () {
+        $timeout(function () {
+          $scope.getData();
+          $scope.intervalFunction();
+        }, 10000)
+      };
+      $scope.getData();
+      $scope.intervalFunction();
+
+    });
+
+  </script>
+  <style>
+    body {
+      font-size: 12px;
+    }
+
+    td {
+      text-align: center;
+    }
+
+    th.rotate {
+      white-space: nowrap;
+    }
+
+    th.rotate>div {
+      transform: rotate(-90deg);
+      width: 18px;
+      height: 17px;
+    }
+
+    tr:first-child {
+      height: 60px;
+      vertical-align: bottom;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <table class="table-striped table-condensed table-hover">
+      <tbody>
+        <tr>
+          <th>&nbsp;</th>
+          <th class="rotate" ng:repeat="i in cols">
+            <div>{{i.dst}}</div>
+          </th>
+        </tr>
+        <tr ng:repeat="i in rows">
+          <th>{{i.src}}</th>
+          <td ng:repeat="k in cols">
+            <!-- brute force lol -->
+            <span ng:repeat="ping in pings" ng:if="ping.src == i.src && ping.dst == k.dst">{{ping.latency_ms}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+
+</html>
