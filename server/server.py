@@ -29,6 +29,9 @@ class PingEncoder(json.JSONEncoder):
 
 
 class AllowSourceAuth(http.server.BaseHTTPRequestHandler):
+    """Mixin to add allowlist authorization capablility to an HTTPRequestHandler.
+    The handler must call authorize() explicitly -- it does not default to auth on all endpoints!"""
+
     allowed_sources = [ip_network("127.0.0.0/8")]
 
     def authorize(self):
