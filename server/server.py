@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Runs a webserver that serves the ping matrix API and UI"""
 import http.server
-from ipaddress import ip_address, ip_network
 import json
-import socketserver
-import pathlib
 import os
+import pathlib
+import socketserver
+from ipaddress import ip_address, ip_network
 
 from storage import InMemoryStorage, Ping, StorageInterface
 
