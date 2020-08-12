@@ -91,11 +91,14 @@ class PingMatrixHttpRequestHandler(
         payload = self.rfile.read(length)
         try:
             ping = Ping(**json.loads(payload))
-        except TypeError as err:
+        except (TypeError, json.decoder.JSONDecodeError) as err:
             self.send_error(400, explain=str(err))
             return
         self.storage_handler.set(ping)
-        self.send_error(201)
+        self.send_response(201)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+        self.wfile.write(bytes(json.dumps(ping, cls=PingEncoder), "utf8",))
         return
 
     @classmethod
