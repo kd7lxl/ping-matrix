@@ -4,4 +4,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8000
 COPY . .
-CMD [ "python", "./server/server.py" ]
+CMD [ "python", "./pingmatrix/server.py" ]
