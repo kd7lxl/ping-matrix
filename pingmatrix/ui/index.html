@@ -15,14 +15,14 @@
           rows = {};
           cols = {};
           console.log(data);
-          angular.forEach(data, function (i) {
+          angular.forEach(data.pings, function (i) {
             console.log(i);
             rows[i.src] = i
             cols[i.dst] = i
           });
           $scope.rows = rows;
           $scope.cols = cols;
-          $scope.pings = data;
+          $scope.pings = data.pings;
         });
       };
 
@@ -58,7 +58,7 @@
     }
 
     tr:first-child {
-      height: 60px;
+      height: 200px;
       vertical-align: bottom;
     }
   </style>
