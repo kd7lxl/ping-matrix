@@ -19,7 +19,11 @@ class HamWANAgent(object):
         r = requests.get(self.hosts_url)
         r.raise_for_status()
         resp = r.json()
-        self.hosts = frozenset(resp.get("mikrotik")).intersection(resp.get("HamWAN"))
+        hosts = []
+        for host in frozenset(resp.get("mikrotik")).intersection(resp.get("HamWAN")):
+            if "r1." in host.lower():
+                hosts.append(host)
+        self.hosts = hosts
 
     def run_once(self, delay=0, threads=30):
         """Pings each host from each host. Returns when complete.
@@ -48,11 +52,13 @@ class HamWANAgent(object):
                     PingClient().post(ping)
                     sleep(delay)
                 q.task_done()
+                print("{} hosts remaining".format(q.unfinished_tasks))
 
         for _ in range(threads):
             threading.Thread(target=worker, daemon=True).start()
         for src in self.hosts:
             q.put(src)
+            print("queued {}".format(src))
         q.join()
 
     def run(self, delay=0):
