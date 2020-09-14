@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "8000"
+  agent:
+    build: .
+    command: ["python", "./pingmatrix/hamwanagent.py"]
+    environment:
+      - SSH_USER
+    volumes:
+      - "${SSH_DIR}:/tmp/.ssh"

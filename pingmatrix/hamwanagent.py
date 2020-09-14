@@ -47,6 +47,8 @@ class HamWANAgent(object):
                         # TODO: support collecting error messages with server
                         continue
                     except socket.error as err:
+                        print("error: {}", err)
+                        # TODO: backoff
                         break
                     print(ping)
                     PingClient().post(ping)
@@ -64,11 +66,17 @@ class HamWANAgent(object):
     def run(self, delay=0):
         while True:
             try:
-                self.run_once(delay)
+                self.run_once(delay=1)
                 self.get_hosts()
             except (KeyboardInterrupt, SystemExit):
                 return
 
 
 if __name__ == "__main__":
-    HamWANAgent().run_once()
+    from sys import argv
+
+    a = HamWANAgent()
+    if "--once" in argv:
+        a.run_once()
+    else:
+        a.run()

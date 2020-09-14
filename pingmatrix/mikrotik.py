@@ -29,7 +29,12 @@ class SSHPingAgent(object):
             ssh.load_system_host_keys()
             ssh.load_host_keys(os.path.expanduser("~/.ssh/known_hosts"))
             ssh.set_missing_host_key_policy(AllowAnythingPolicy())
-            ssh.connect(self.hostname, port=port, timeout=timeout)
+            ssh.connect(
+                self.hostname,
+                port=port,
+                username=os.environ.get("SSH_USER"),
+                timeout=timeout,
+            )
             self.connection_cache[hostname] = ssh
         self.ssh = self.connection_cache[hostname]
 
