@@ -14,15 +14,20 @@
         $http.get('pings').success(function (data) {
           rows = {};
           cols = {};
+          pings = {};
           console.log(data);
           angular.forEach(data.pings, function (i) {
             console.log(i);
             rows[i.src] = i
             cols[i.dst] = i
+            if (typeof pings[i.src] === 'undefined') {
+              pings[i.src] = {}
+            }
+            pings[i.src][i.dst] = i
           });
           $scope.rows = rows;
           $scope.cols = cols;
-          $scope.pings = data.pings;
+          $scope.pings = pings;
         });
       };
 
@@ -30,7 +35,7 @@
         $timeout(function () {
           $scope.getData();
           $scope.intervalFunction();
-        }, 10000)
+        }, 30000)
       };
       $scope.getData();
       $scope.intervalFunction();
@@ -77,8 +82,7 @@
         <tr ng:repeat="i in rows">
           <th>{{i.src}}</th>
           <td ng:repeat="k in cols">
-            <!-- brute force lol -->
-            <span ng:repeat="ping in pings" ng:if="ping.src == i.src && ping.dst == k.dst">{{ping.latency_ms}}</span>
+            {{pings[i.src][k.dst].latency_ms}}
           </td>
         </tr>
       </tbody>
